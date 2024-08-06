@@ -1,7 +1,10 @@
-FROM python:3.9-slim
+FROM python:3.9
+# Set the working directory in the container
 WORKDIR /app
+ENV PYTHONUNBUFFERED 1# Copy the requirements file into the container
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip
+# Install Python dependencies
+RUN pip install -r requirements.txt# Copy only the necessary files
 COPY . .
-EXPOSE 8000
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+EXPOSE 8008
