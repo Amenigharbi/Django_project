@@ -1,10 +1,15 @@
 FROM python:3.9
+
 # Set the working directory in the container
 WORKDIR /app
-ENV PYTHONUNBUFFERED 1# Copy the requirements file into the container
+
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip
-# Install Python dependencies
-RUN pip install -r requirements.txt# Copy only the necessary files
+RUN pip install -r requirements.txt
+
+# Copy only the necessary files
 COPY . .
+
+# Expose the port the app runs on
 EXPOSE 8008
