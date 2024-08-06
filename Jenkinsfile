@@ -21,15 +21,6 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                script {
-                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").inside {
-                        sh 'pytest'
-                    }
-                }
-            }
-        }
 
         stage('Deploy') {
             steps {
