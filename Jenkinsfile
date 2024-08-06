@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'my_django_app'
         DOCKER_TAG = 'latest'
+        DJANGO_SETTINGS_MODULE = 'school_app.settings'
     }
 
     stages {
@@ -21,11 +22,19 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                script {
+                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").inside {
+                        sh 'pytest'
+                    }
+                }
+            }
+        }
 
         stage('Deploy') {
             steps {
                 script {
-                    // Déployer l'application
                     docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").inside {
                         sh 'python manage.py migrate'
                         sh 'python manage.py collectstatic --noinput'
@@ -33,11 +42,27 @@ pipeline {
                 }
             }
         }
+
+        stage('Debug') {
+            steps {
+                script {
+                    sh 'docker info'
+                    sh 'docker ps -a'
+                    sh 'docker images'
+                }
+            }
+        }
     }
 
     post {
         always {
-            sh 'docker system prune -f'
+            script {
+                try {
+                    sh 'docker system prune -f'
+                } catch (Exception e) {
+                    echo "Failed to clean up Docker images"
+                }
+            }
         }
     }
 }

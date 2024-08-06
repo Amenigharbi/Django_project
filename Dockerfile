@@ -11,5 +11,6 @@ RUN pip install -r requirements.txt
 # Copy only the necessary files
 COPY . .
 
+ENV DJANGO_SETTINGS_MODULE=school_app.settings
 # Expose the port the app runs on
 EXPOSE 8008
