@@ -18,3 +18,4 @@ regex==2021.7.6
 sqlparse==0.4.2
 tomli==1.0.4
 pytest
+psycopg2-binary

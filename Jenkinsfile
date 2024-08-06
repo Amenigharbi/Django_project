@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Amenigharbi/Django_project.git'
+                git 'https://github.com/Amenigharbi/Django_project_docker_jenkins.git'
             }
         }
 
