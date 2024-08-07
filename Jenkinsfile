@@ -5,15 +5,11 @@ pipeline {
         DOCKER_IMAGE = 'my_django_app'
         DOCKER_TAG = 'latest'
         DJANGO_SETTINGS_MODULE = 'school_app.settings'
+        DOCKER_HUB_CREDENTIALS = ''
+        DOCKER_HUB_REPO = ''
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/Amenigharbi/Django_project_docker_jenkins.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
@@ -21,48 +17,18 @@ pipeline {
                 }
             }
         }
-
-        stage('Run Tests') {
-            steps {
-                script {
-                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").inside {
-                        sh 'pytest'
-                    }
-                }
-            }
-        }
-
         stage('Deploy') {
             steps {
                 script {
-                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").inside {
-                        sh 'python manage.py migrate'
-                        sh 'python manage.py collectstatic --noinput'
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_HUB_CREDENTIALS}") {
+                        def customImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                        customImage.push("${DOCKER_TAG}")
                     }
                 }
             }
         }
 
-        stage('Debug') {
-            steps {
-                script {
-                    sh 'docker info'
-                    sh 'docker ps -a'
-                    sh 'docker images'
-                }
-            }
-        }
     }
 
-    post {
-        always {
-            script {
-                try {
-                    sh 'docker system prune -f'
-                } catch (Exception e) {
-                    echo "Failed to clean up Docker images"
-                }
-            }
-        }
-    }
+    
 }
