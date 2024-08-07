@@ -12,21 +12,19 @@ pipeline {
             steps {
                 script {
                     sh 'docker build -t ${DOCKER_IMAGE} .'
-                    
                 }
             }
         }
-        stage('deploy in Docker Hub') {          
+        stage('Deploy to Docker Hub') {          
             steps {
-              script {
-                   withCredentials([string(credentialsId: 'dockerHub', variable: 'dockerHub')])
-                  {   
-                   sh 'docker login -u amenigharbi -p ${dockerhubpwd}'
-                   sh 'docker push ${DOCKER_IMAGE}:${DOCKER_TAG}'
-                  }       
-              }
+                script {
+                    withCredentials([string(credentialsId: 'dockerHub', variable: 'dockerHub')]) {   
+                        sh 'docker login -u amenigharbi -p ${dockerHub}'
+                        sh 'docker tag ${DOCKER_IMAGE}:latest amenigharbi/${DOCKER_IMAGE}:${DOCKER_TAG}'
+                        sh 'docker push amenigharbi/${DOCKER_IMAGE}:${DOCKER_TAG}'
+                    }
+                }
+            }
         }
-
-
-        }
+    }
 }
