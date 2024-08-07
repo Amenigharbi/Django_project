@@ -11,8 +11,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}")
-                    docker.tag("${DOCKER_IMAGE}") amenigharbi/"${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh 'docker build -t ${DOCKER_IMAGE} .'
                 }
             }
         }
@@ -22,7 +21,7 @@ pipeline {
                    withCredentials([string(credentialsId: 'dockerHub', variable: 'dockerHub')])
                   {   
                    sh 'docker login -u amenigharbi -p ${dockerhubpwd}'
-                   sh  'docker push amenigharbi/${DOCKER_IMAGE}:${DOCKER_TAG}'
+                   sh 'docker push amenigharbi/${DOCKER_IMAGE}:${DOCKER_TAG}'
                   }       
               }
         }
